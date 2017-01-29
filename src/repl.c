@@ -2,9 +2,7 @@
 #include <stdlib.h>
 
 #include "../lib/mpc.h"
-
-long eval (mpc_ast_t*);
-long eval_op(long, char*, long);
+#include "parser.h"
 
 #ifdef _WIN32
 #include <string.h>
@@ -69,31 +67,5 @@ int main (int argc, char** argv) {
 
   // Undefine & delete parsers
   mpc_cleanup(4, Number, Operator, Expr, Lispy);
-  return 0;
-}
-
-long eval (mpc_ast_t* t) {
-  if (strstr(t->tag, "number")) {
-    return atoi(t->contents);
-  }
-
-  // Operator is always a second child
-  char* op = t->children[1]->contents;
-  long x = eval(t->children[2]);
-
-  int i = 3;
-  while (strstr(t->children[i]->tag, "expr")) {
-    x = eval_op(x, op, eval(t->children[i]));
-    i++;
-  }
-
-  return x;
-}
-
-long eval_op (long x, char* op, long y) {
-  if (strcmp(op, "+") == 0) { return x + y; }
-  if (strcmp(op, "-") == 0) { return x - y; }
-  if (strcmp(op, "*") == 0) { return x * y; }
-  if (strcmp(op, "/") == 0) { return x / y; }
   return 0;
 }
