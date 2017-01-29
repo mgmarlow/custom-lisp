@@ -13,24 +13,28 @@ typedef struct lval {
 } lval;
 
 // Constructors and destructors for type wrapper
-lval* lval_num(long);
-lval* lval_err(char*);
-lval* lval_sym(char*);
-lval* lval_sexpr(void);
-void lval_del(lval*);
+lval* lval_num (long);
+lval* lval_err (char*);
+lval* lval_sym (char*);
+lval* lval_sexpr (void);
+void lval_del (lval*);
 
 // Parsing logic
-lval* lval_read_num(mpc_ast_t*);
-lval* lval_read(mpc_ast_t*);
-lval* lval_add(lval*, lval*);
+lval* lval_read_num (mpc_ast_t*);
+lval* lval_read (mpc_ast_t*);
+lval* lval_add (lval*, lval*);
 
 // Printing
-void lval_expr_print(lval*, char, char);
-void lval_print(lval*);
-void lval_println(lval*);
+void lval_expr_print (lval*, char, char);
+void lval_print (lval*);
+void lval_println (lval*);
 
 // Evaluate expressions
-lval eval(mpc_ast_t*);
-lval eval_op(lval, char*, lval);
+lval* lval_eval_sexpr (lval*);
+lval* lval_eval (lval*);
+// Helpers
+lval* lval_pop (lval*, int);
+lval* lval_take (lval*, int);
+lval* builtin_op (lval*, char*);
 
 #endif
