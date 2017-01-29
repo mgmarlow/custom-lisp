@@ -28,18 +28,20 @@ void add_history (char* unused) {}
 
 int main (int argc, char** argv) {
   mpc_parser_t* Number   = mpc_new("number");
-  mpc_parser_t* Operator = mpc_new("operator");
+  mpc_parser_t* Symbol   = mpc_new("symbol");
+  mpc_parser_t* Sexpr    = mpc_new("sexpr");
   mpc_parser_t* Expr     = mpc_new("expr");
   mpc_parser_t* Lispy    = mpc_new("lispy");
 
   mpca_lang(MPCA_LANG_DEFAULT,
     "                                                    \
       number   : /-?[0-9]+/ ;                            \
-      operator : '+' | '-' | '*' | '/' ;                 \
-      expr     : <number> | '(' <operator> <expr>+ ')' ; \
-      lispy    : /^/ <operator> <expr>+ /$/ ;            \
+      symbol   : '+' | '-' | '*' | '/' ;                 \
+      sexpr    : '(' <expr>* ')' ;                       \
+      expr     : <number> | <symbol> | <sexpr> ;         \
+      lispy    : /^/ <expr>* /$/ ;            \
     ",
-    Number, Operator, Expr, Lispy
+    Number, Symbol, Sexpr, Expr, Lispy
   );
 
   puts("CLisp v0.1");
@@ -52,9 +54,9 @@ int main (int argc, char** argv) {
     // Parse user input
     mpc_result_t r;
     if (mpc_parse("<stdin>", input, Lispy, &r)) {
-      lval result = eval(r.output);
-      lval_println(result);
-      mpc_ast_delete(r.output);
+      lval* x = lval_read(r.output);
+      lval_println(x);
+      lval_del(x);
     } else {
       // Print Error
       mpc_err_print(r.error);
@@ -65,6 +67,6 @@ int main (int argc, char** argv) {
   }
 
   // Undefine & delete parsers
-  mpc_cleanup(4, Number, Operator, Expr, Lispy);
+  mpc_cleanup(5, Number, Symbol, Sexpr, Expr, Lispy);
   return 0;
 }
