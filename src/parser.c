@@ -130,7 +130,7 @@ void lval_println (lval* v) {
   putchar('\n');
 }
 
-// Evaluate Lispy Operations
+// Evaluate s-expressions fed in through lval_read
 lval* lval_eval_sexpr (lval* v) {
   for (int i = 0; i < v->count; i++) {
     v->cell[i] = lval_eval(v->cell[i]);
@@ -155,12 +155,14 @@ lval* lval_eval_sexpr (lval* v) {
   return result;
 }
 
+// Wrapper to only evaluate s-expressions
 lval* lval_eval (lval* v) {
   // Only evaluate S-expressions
   if (v->type == LVAL_SEXPR) { return lval_eval_sexpr(v); }
   return v;
 }
 
+// Extract a single element from an s-expression and shift the list
 lval* lval_pop (lval* v, int i) {
   lval* x = v->cell[i];
 
@@ -175,6 +177,7 @@ lval* lval_pop (lval* v, int i) {
   return x;
 }
 
+// Extract a single element from an s-expression and delete the source list
 lval* lval_take (lval* v, int i) {
   lval* x = lval_pop(v, i);
   lval_del(v);
