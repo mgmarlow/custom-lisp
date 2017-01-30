@@ -1,5 +1,8 @@
-#ifndef PARSER_H_
-#define PARSER_H_
+#ifndef PARSER_H
+#define PARSER_H
+
+// Possible LVAL types
+enum { LVAL_NUM, LVAL_ERR, LVAL_SYM, LVAL_SEXPR };
 
 // Wrapper for values for error handling
 typedef struct lval {
@@ -29,12 +32,11 @@ void lval_expr_print (lval*, char, char);
 void lval_print (lval*);
 void lval_println (lval*);
 
-// Evaluate expressions
+// Evaluate expressions (uses builtin for evaluation)
 lval* lval_eval_sexpr (lval*);
 lval* lval_eval (lval*);
 // Helpers
 lval* lval_pop (lval*, int);
 lval* lval_take (lval*, int);
-lval* builtin_op (lval*, char*);
 
 #endif

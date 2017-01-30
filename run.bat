@@ -1,1 +1,1 @@
-gcc -std=c99 -Wall ./src/repl.c ./lib/mpc.c ./src/parser.c -o repl
+gcc -std=c99 -Wall ./src/repl.c ./lib/mpc.c ./src/lval.c ./src/builtin.c -o repl

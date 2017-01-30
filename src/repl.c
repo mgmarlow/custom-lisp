@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "../lib/mpc.h"
-#include "parser.h"
+#include "lval.h"
 
 #ifdef _WIN32
 #include <string.h>
