@@ -40,4 +40,7 @@ lval* lval_eval (lval*);
 lval* lval_pop (lval*, int);
 lval* lval_take (lval*, int);
 
+// Q expressions
+lval* lval_join (lval*, lval*);
+
 #endif
