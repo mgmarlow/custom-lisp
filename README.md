@@ -7,3 +7,5 @@
 ### Windows
 
 Use the included batch file, `run.bat` to compile `repl.exe`, which will begin the Lisp REPL.
+
+![](./img/clisp.png)
