@@ -6,5 +6,7 @@
  */
 
 lval* builtin_op (lval*, char*);
+lval* builtin_head (lval*);
+lval* builtin_tail (lval*);
 
 #endif

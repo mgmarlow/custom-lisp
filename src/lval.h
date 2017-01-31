@@ -2,7 +2,7 @@
 #define PARSER_H
 
 // Possible LVAL types
-enum { LVAL_NUM, LVAL_ERR, LVAL_SYM, LVAL_SEXPR };
+enum { LVAL_NUM, LVAL_ERR, LVAL_SYM, LVAL_SEXPR, LVAL_QEXPR };
 
 // Wrapper for values for error handling
 typedef struct lval {
@@ -20,6 +20,7 @@ lval* lval_num (long);
 lval* lval_err (char*);
 lval* lval_sym (char*);
 lval* lval_sexpr (void);
+lval* lval_qexpr (void);
 void lval_del (lval*);
 
 // Parsing logic
