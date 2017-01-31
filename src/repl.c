@@ -37,7 +37,7 @@ int main (int argc, char** argv) {
   mpca_lang(MPCA_LANG_DEFAULT,
     "                                                      \
       number   : /-?[0-9]+/ ;                              \
-      symbol   : \"list\" + \"head\" | \"tail\" | \"join\" \
+      symbol   : \"list\" | \"head\" | \"tail\" | \"join\" \
                | \"eval\" | '+' | '-' | '*' | '/' ;        \
       sexpr    : '(' <expr>* ')' ;                         \
       qexpr    : '{' <expr>* '}' ;                         \

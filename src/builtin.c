@@ -2,6 +2,19 @@
 #include "lval.h"
 #include "builtin.h"
 
+// Function lookups
+lval* builtin (lval* a, char* func) {
+  if (strcmp("list", func) == 0) { return builtin_list(a); }
+  if (strcmp("head", func) == 0) { return builtin_head(a); }
+  if (strcmp("tail", func) == 0) { return builtin_tail(a); }
+  if (strcmp("join", func) == 0) { return builtin_join(a); }
+  if (strcmp("eval", func) == 0) { return builtin_eval(a); }
+  if (strstr("+-/*", func)) { return builtin_op(a, func); }
+
+  lval_del(a);
+  return lval_err("Unknown Function.");
+}
+
 // Takes in list of lval arguments and returns expressions
 lval* builtin_op (lval* a, char* op) {
   for (int i = 0; i < a->count; i++) {
@@ -63,7 +76,7 @@ lval* builtin_tail (lval* a) {
     "Function 'tail' passed too many arguments.");
   LASSERT(a, a->cell[0]->type == LVAL_QEXPR,
     "Function 'tail' passed incorrect type!");
-  LASSERT(a, a->cell[0]->type != 0,
+  LASSERT(a, a->cell[0]->count != 0,
     "Function 'tail' passed {}.");
 
   lval* v = lval_take(a, 0);

@@ -8,6 +8,7 @@
  * Library for evaluating expressions provided from LVALs
  */
 
+lval* builtin (lval*, char*);
 lval* builtin_op (lval*, char*);
 
 // Q-Expressions
@@ -19,7 +20,7 @@ lval* builtin_tail (lval*);
 lval* builtin_list (lval*);
 // Convert Qexpr to Sexpr
 lval* builtin_eval (lval*);
-// Combine elements in qexpr
+// Combine multiple qexpr into a single qexpr
 lval* builtin_join (lval*);
 
 #endif
