@@ -1,5 +1,5 @@
-#ifndef PARSER_H
-#define PARSER_H
+#ifndef LVAL_H
+#define LVAL_H
 
 struct lval;
 struct lenv;
