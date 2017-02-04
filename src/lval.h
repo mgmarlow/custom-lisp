@@ -32,7 +32,7 @@ struct lenv {
 
 // Constructors and destructors for type wrapper
 lval* lval_num (long);
-lval* lval_err (char*);
+lval* lval_err (char*, ...);
 lval* lval_sym (char*);
 lval* lval_sexpr (void);
 lval* lval_qexpr (void);
@@ -48,6 +48,7 @@ lval* lval_add (lval*, lval*);
 void lval_expr_print (lval*, char, char);
 void lval_print (lval*);
 void lval_println (lval*);
+char* ltype_name (int);
 
 // Evaluate expressions (uses builtin for evaluation)
 lval* lval_eval_sexpr (lenv*, lval*);

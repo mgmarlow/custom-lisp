@@ -10,12 +10,23 @@ lval* lval_num (long x) {
   return v;
 }
 
-lval* lval_err (char* m) {
+lval* lval_err (char* fmt, ...) {
   lval* v = malloc(sizeof(lval));
   v->type = LVAL_ERR;
-  // Account for null-terminating character
-  v->err = malloc(strlen(m) + 1);
-  strcpy(v->err, m);
+
+  // Argument list
+  va_list va;
+  va_start(va, fmt);
+
+  // Max 511 chars
+  v->err = malloc(512);
+  vsnprintf(v->err, 511, fmt, va);
+
+  v->err = realloc(v->err, strlen(v->err) + 1);
+
+  // Cleanup
+  va_end(va);
+
   return v;
 }
 
@@ -153,6 +164,18 @@ void lval_println (lval* v) {
   putchar('\n');
 }
 
+char* ltype_name (int t) {
+  switch (t) {
+    case LVAL_FUN: return "function";
+    case LVAL_NUM: return "number";
+    case LVAL_ERR: return "Error";
+    case LVAL_SYM: return "Symbol";
+    case LVAL_SEXPR: return "S-Exprresion";
+    case LVAL_QEXPR: return "Q-Expression";
+    default: return "Unknown";
+  }
+}
+
 // Evaluate s-expressions fed in through lval_read
 lval* lval_eval_sexpr (lenv* e, lval* v) {
   for (int i = 0; i < v->count; i++) {
@@ -288,7 +311,7 @@ lval* lenv_get (lenv* e, lval* k) {
     }
   }
 
-  return lval_err("unbound symbol!");
+  return lval_err("Unbound Symbol '%s'", k->sym);
 }
 
 void lenv_put (lenv* e, lval* k, lval* v) {

@@ -54,10 +54,7 @@ lval* builtin_def (lenv* e, lval* a) {
 // Takes in list of lval arguments and returns expressions
 lval* builtin_op (lenv* e, lval* a, char* op) {
   for (int i = 0; i < a->count; i++) {
-    if (a->cell[i]->type != LVAL_NUM) {
-      lval_del(a);
-      return lval_err("Cannot operate on non-number!");
-    }
+    LASSERT_TYPE(op, a, i, LVAL_NUM);
   }
 
   lval* x = lval_pop(a, 0);
@@ -106,12 +103,9 @@ lval* builtin_div (lenv* e, lval* a) {
 }
 
 lval* builtin_head (lenv* e, lval* a) {
-  LASSERT(a, a->count == 1,
-    "Function 'head' passed too many arguments.");
-  LASSERT(a, a->cell[0]->type == LVAL_QEXPR,
-    "Function 'head' passed incorrect type!");
-  LASSERT(a, a->cell[0]->type != 0,
-    "Function 'head' passed {}.");
+  LASSERT_NUM("head", a, 1);
+  LASSERT_TYPE("head", a, 0, LVAL_QEXPR);
+  LASSERT_NOT_EMPTY("head", a, 0);
 
   // If all error conditions pass, grab first element
   lval* v = lval_take(a, 0);
@@ -124,12 +118,9 @@ lval* builtin_head (lenv* e, lval* a) {
 }
 
 lval* builtin_tail (lenv* e, lval* a) {
-  LASSERT(a, a->count == 1,
-    "Function 'tail' passed too many arguments.");
-  LASSERT(a, a->cell[0]->type == LVAL_QEXPR,
-    "Function 'tail' passed incorrect type!");
-  LASSERT(a, a->cell[0]->count != 0,
-    "Function 'tail' passed {}.");
+  LASSERT_NUM("tail", a, 1);
+  LASSERT_TYPE("tail", a, 0, LVAL_QEXPR);
+  LASSERT_NOT_EMPTY("tail", a, 0);
 
   lval* v = lval_take(a, 0);
   lval_del(lval_pop(v, 0));
@@ -142,11 +133,9 @@ lval* builtin_list (lenv* e, lval* a) {
 }
 
 lval* builtin_eval (lenv* e, lval* a) {
-  LASSERT(a, a->count == 1,
-    "Function 'eval' passed too many arguments.");
-  LASSERT(a, a->cell[0]->type == LVAL_QEXPR,
-    "Function 'eval' passed incorrect type.");
-
+  LASSERT_NUM("eval", a, 1);
+  LASSERT_TYPE("eval", a, 0, LVAL_QEXPR);
+  
   lval* x = lval_take(a, 0);
   x->type = LVAL_SEXPR;
   return lval_eval(e, x);
@@ -154,8 +143,7 @@ lval* builtin_eval (lenv* e, lval* a) {
 
 lval* builtin_join (lenv* e, lval* a) {
   for (int i = 0; i < a->count; i++) {
-    LASSERT(a, a->cell[i]->type == LVAL_QEXPR,
-      "Function 'join' passed incorrect type.");
+    LASSERT_TYPE("join", a, i, LVAL_QEXPR);
   }
 
   lval* x = lval_pop(a, 0);
