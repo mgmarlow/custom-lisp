@@ -42,5 +42,7 @@ lval* builtin_list (lenv*, lval*);
 lval* builtin_eval (lenv*, lval*);
 // Combine multiple qexpr into a single qexpr
 lval* builtin_join (lenv*, lval*);
+// Define variables
+lval* builtin_def (lenv*, lval*);
 
 #endif
