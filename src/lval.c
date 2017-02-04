@@ -154,9 +154,9 @@ void lval_println (lval* v) {
 }
 
 // Evaluate s-expressions fed in through lval_read
-lval* lval_eval_sexpr (lval* v) {
+lval* lval_eval_sexpr (lenv* e, lval* v) {
   for (int i = 0; i < v->count; i++) {
-    v->cell[i] = lval_eval(v->cell[i]);
+    v->cell[i] = lval_eval(e, v->cell[i]);
   }
 
   for (int i = 0; i < v->count; i++) {
@@ -167,21 +167,29 @@ lval* lval_eval_sexpr (lval* v) {
   if (v->count == 1) { return lval_take(v, 0); }
 
   lval* f = lval_pop(v, 0);
-  if (f->type != LVAL_SYM) {
-    lval_del(f);
+  if (f->type != LVAL_FUN) {
     lval_del(v);
-    return lval_err("S-expression does not start with symbol!");
+    lval_del(f);
+    return lval_err("first element is not a function");
   }
 
-  lval* result = builtin(v, f->sym);
+  lval* result = f->fun(e, v);
   lval_del(f);
   return result;
 }
 
 // Wrapper to only evaluate s-expressions
-lval* lval_eval (lval* v) {
-  // Only evaluate S-expressions
-  if (v->type == LVAL_SEXPR) { return lval_eval_sexpr(v); }
+lval* lval_eval (lenv* e, lval* v) {
+  if (v->type == LVAL_SYM) {
+    lval* x = lenv_get(e, v);
+    lval_del(v);
+    return x;
+  }
+
+  if (v->type == LVAL_SEXPR) {
+    return lval_eval_sexpr(e, v);
+  }
+
   return v;
 }
 
@@ -283,7 +291,7 @@ lval* lenv_get (lenv* e, lval* k) {
   return lval_err("unbound symbol!");
 }
 
-void lval_put (lenv* e, lval* k, lval* v) {
+void lenv_put (lenv* e, lval* k, lval* v) {
   for (int i = 0; i < e->count; i++) {
     if (strcmp(e->syms[i], k->sym) == 0) {
       lval_del(e->vals[i]);
@@ -300,4 +308,12 @@ void lval_put (lenv* e, lval* k, lval* v) {
   e->vals[e->count - 1] = lval_copy(v);
   e->syms[e->count - 1] = malloc(strlen(k->sym) + 1);
   strcpy(e->syms[e->count - 1], k->sym);
+}
+
+void lenv_add_builtin (lenv* e, char* name, lbuiltin func) {
+  lval* k = lval_sym(name);
+  lval* v = lval_fun(func);
+  lenv_put(e, k, v);
+  lval_del(k);
+  lval_del(v);
 }

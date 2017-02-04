@@ -50,8 +50,8 @@ void lval_print (lval*);
 void lval_println (lval*);
 
 // Evaluate expressions (uses builtin for evaluation)
-lval* lval_eval_sexpr (lval*);
-lval* lval_eval (lval*);
+lval* lval_eval_sexpr (lenv*, lval*);
+lval* lval_eval (lenv*, lval*);
 // Helpers
 lval* lval_pop (lval*, int);
 lval* lval_take (lval*, int);
@@ -69,5 +69,7 @@ void lenv_del (lenv*);
 
 lval* lenv_get (lenv*, lval*);
 void lenv_put (lenv*, lval*, lval*);
+
+void lenv_add_builtin (lenv*, char*, lbuiltin);
 
 #endif

@@ -3,6 +3,7 @@
 
 #include "../lib/mpc.h"
 #include "lval.h"
+#include "builtin.h"
 
 #ifdef _WIN32
 #include <string.h>
@@ -46,6 +47,9 @@ int main (int argc, char** argv) {
     Number, Symbol, Sexpr, Qexpr, Expr, Lispy
   );
 
+  lenv* e = lenv_new();
+  lenv_add_builtins(e);
+
   puts("CLisp v0.1");
   puts("Press Ctrl+c to Exit");
 
@@ -56,9 +60,11 @@ int main (int argc, char** argv) {
     // Parse user input
     mpc_result_t r;
     if (mpc_parse("<stdin>", input, Lispy, &r)) {
-      lval* x = lval_eval(lval_read(r.output));
+      lval* x = lval_eval(e, lval_read(r.output));
       lval_println(x);
       lval_del(x);
+
+      mpc_ast_delete(r.output);
     } else {
       // Print Error
       mpc_err_print(r.error);
@@ -67,6 +73,8 @@ int main (int argc, char** argv) {
 
     free(input);
   }
+
+  lenv_del(e);
 
   // Undefine & delete parsers
   mpc_cleanup(6, Number, Symbol, Sexpr, Qexpr, Expr, Lispy);
